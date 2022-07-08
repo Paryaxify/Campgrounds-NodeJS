@@ -1,68 +1,35 @@
 <% layout('layouts/boilerplate') -%>
 
 <div class="row">
-	<div class="col-md-6 offset-3">
-		<div class="card mt-3">
-			<img src="<%= campground.image %>" alt="camp image" class="card-img-top" />
-			<div class="card-body">
-				<div class="row justify-content-between">
-					<div class="col-10">
-						<h5 class="card-title"><%= campground.title %></h5>
-					</div>
-					<div class="col-2 "><span class="btn btn-info fs-5">&dollar; <%= campground.price %></span></div>
-				</div>
-				
-				<h6 class="card-subtitle mb-2 text-muted"><%= campground.location %></h6>
-				<p class="card-text"><%= campground.description %></p>
-				<div class="py-3 row justify-content-between">
-					<div class="col-4 text-center">
-						<a href="/campgrounds/<%= campground._id %>/update ">
-							<input type="submit" value="Update Campground" class="btn btn-warning"/>
-						</a>
-					</div>
-					<div class="col-4 text-center">
-						<form action="/campgrounds/<%= campground._id %>?_method=DELETE" method="post">
-							<button type="submit" class="btn btn-danger">Delete Campground</button>
-						</form>
-					</div>
-				</div>
-				
-			</div>
-		</div>
-	</div>
+    <div class="col-md-6 offset-3">
+        <div class="card mt-3">
+            <img src="<%= campground.image %>" alt="camp image" class="card-img-top"/>
+            <div class="card-body">
+                <div class="row justify-content-between">
+                    <div class="col-9">
+                        <h5 class="card-title"><%= campground.title %></h5>
+                    </div>
+                    <div class="col-3 "><span class="btn btn-info fs-5">&dollar; <%= campground.price %></span></div>
+                </div>
+
+                <h6 class="card-subtitle mb-2 text-muted"><%= campground.location %></h6>
+                <p class="card-text"><%= campground.description %></p>
+                <div class="py-3 row justify-content-between">
+                    <div class="col-4 text-center">
+                        <a href="/campgrounds/<%= campground._id %>/update ">
+                            <input type="submit" value="Update Campground" class="btn btn-warning"/>
+                        </a>
+                    </div>
+                    <div class="col-4 text-center">
+                        <form action="/campgrounds/<%= campground._id %>?_method=DELETE" method="post">
+                            <button type="submit" class="btn btn-danger">Delete Campground</button>
+                        </form>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
 </div>
 
 <a href="/campgrounds">Back to Main Page</a>
-
-<!-- <div class="card" style="width: 18rem">
-	<img src="..." class="card-img-top" alt="..." />
-	<div class="card-body">
-		<h5 class="card-title">Card title</h5>
-		<p class="card-text">
-			Some quick example text to build on the card title and make up the bulk of the card's
-			content.
-		</p>
-	</div>
-	<ul class="list-group list-group-flush">
-		<li class="list-group-item">An item</li>
-		<li class="list-group-item">A second item</li>
-		<li class="list-group-item">A third item</li>
-	</ul>
-	<div class="card-body">
-		<a href="#" class="card-link">Card link</a>
-		<a href="#" class="card-link">Another link</a>
-	</div>
-</div>
-
-<h1><%= campground.title %></h1>
-<h2><%= campground.location %></h2>
-<h4><%= campground.price %></h4>
-<img src="<%= campground.image %> " alt="campground image" />
-<p><%= campground.description %></p>
-<a href="/campgrounds">Back to Main Page</a>
-<a href="/campgrounds/<%= campground._id %>/update ">
-	<input type="submit" value="Update Campground" />
-</a>
-<form action="/campgrounds/<%= campground._id %>?_method=DELETE" method="post">
-	<button>Delete Campground</button>
-</form> -->
