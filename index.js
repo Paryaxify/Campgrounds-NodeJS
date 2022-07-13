@@ -9,10 +9,11 @@ const morgan = require('morgan')
 
 // import files
 const Campground = require('./models/campground')
+const Review = require('./models/review')
 //mongoose error handling wrapper
 const catchAsync = require('./utils/catchAsync')
 const ExpressError = require('./utils/ExpressError')
-const campgroundSchema  = require('./JoiSchemas.js')
+const { campgroundSchema, reviewSchema } = require('./JoiSchemas.js')
 
 //connect to mongoDB database
 async function db() {
@@ -33,16 +34,24 @@ app.engine('ejs', engine)
 app.set('view engine', 'ejs')
 app.set('views', path.join(__dirname, 'views'));
 // parse application/x-www-form-urlencoded
-app.use(bodyParser.urlencoded({extended: true}))
+app.use(bodyParser.urlencoded({ extended: true }))
 // parse application/json
 app.use(bodyParser.json())
 // method override
 app.use(methodOverride('_method'))
 app.use(morgan('tiny'))
 
-function validateCampground(req, res, next){
-    const {error} = campgroundSchema.validate(req.body)
-    if (error){
+function validateCampground(req, res, next) {
+    const { error } = campgroundSchema.validate(req.body)
+    if (error) {
+        throw new ExpressError(error, 400)
+    }
+    next()
+}
+
+function validateReview(req, res, next) {
+    const { error } = reviewSchema.validate(req.body)
+    if (error) {
         throw new ExpressError(error, 400)
     }
     next()
@@ -55,7 +64,7 @@ app.get('/', (req, res) => {
 
 app.get('/campgrounds', catchAsync(async (req, res, next) => {
     const camps = await Campground.find({})
-    res.render('campgrounds/index', {camps})
+    res.render('campgrounds/index', { camps })
 }))
 
 // create new campground
@@ -74,29 +83,46 @@ app.post('/campgrounds', validateCampground, catchAsync(async (req, res, next) =
 }))
 
 app.get('/campgrounds/:id/update', catchAsync(async (req, res, next) => {
-    const {id} = req.params;
+    const { id } = req.params;
     const findCamp = await Campground.findById(id);
-    res.render('campgrounds/update', {findCamp})
+    res.render('campgrounds/update', { findCamp })
 }))
 
-app.patch('/campgrounds/:id', validateCampground ,catchAsync(async (req, res, next) => {
-    const {id} = req.params
+app.patch('/campgrounds/:id', validateCampground, catchAsync(async (req, res, next) => {
+    const { id } = req.params
     const data = req.body.campground
-    const updateCamp = await Campground.findByIdAndUpdate(id, data, {runValidators: true})
+    const updateCamp = await Campground.findByIdAndUpdate(id, data, { runValidators: true })
     res.redirect(`/campgrounds/${updateCamp._id}`)
 }))
 
 app.delete('/campgrounds/:id', catchAsync(async (req, res, next) => {
-    const {id} = req.params
+    const { id } = req.params
     await Campground.findByIdAndDelete(id)
     res.redirect('/campgrounds')
 }))
 
-
 app.get('/campgrounds/:id', catchAsync(async (req, res) => {
     const id = req.params.id;
+    const campground = await Campground.findById(id).populate('reviews')
+    res.render('campgrounds/details', { campground })
+}))
+
+app.post('/campgrounds/:id/reviews', validateReview, catchAsync(async (req, res) => {
+    const { id } = req.params
+    const data = req.body.review
+    const review = new Review(data)
     const campground = await Campground.findById(id)
-    res.render('campgrounds/details', {campground})
+    campground.reviews.push(review)
+    await review.save()
+    await campground.save()
+    res.redirect(`/campgrounds/${campground._id}`)
+}))
+
+app.delete('/campgrounds/:id/reviews/:reviewId', catchAsync(async (req, res, next) => {
+    const { id, reviewId } = req.params
+    const campground = await Campground.findByIdAndUpdate(id, {$pull:{reviews: reviewId}})
+    await Review.findByIdAndDelete(reviewId)
+    res.redirect(`/campgrounds/${campground._id}`)
 }))
 
 app.all('*', (req, res, next) => {
@@ -104,11 +130,11 @@ app.all('*', (req, res, next) => {
 })
 
 app.use((err, req, res, next) => {
-    const {statusCode = 500} = err
+    const { statusCode = 500 } = err
     if (!err.message) {
         err.message = 'Oh No, Something Went Wrong'
     }
-    res.status(statusCode).render('campgrounds/error', {err})
+    res.status(statusCode).render('campgrounds/error', { err })
 })
 
 // Listen to port
