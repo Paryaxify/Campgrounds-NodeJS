@@ -13,6 +13,8 @@ const { campgroundSchema } = require('../JoiSchemas.js')
 
 // login middleware
 const isLoggedIn = require('../middleware/isLoggedIn')
+// author middleware
+const { isOwner } = require('../middleware/isOwner')
 
 function validateCampground(req, res, next) {
     const { error } = campgroundSchema.validate(req.body)
@@ -38,18 +40,19 @@ router.post('/', isLoggedIn, validateCampground, catchAsync(async (req, res, nex
     }
     const data = req.body.campground
     const newcamp = new Campground(data);
+    newcamp.author = req.user._id
     await newcamp.save()
     req.flash('success', 'Successfully created a new campground')
     res.redirect(`/campgrounds/${newcamp._id}`)
 }))
 
-router.get('/:id/update', isLoggedIn, catchAsync(async (req, res, next) => {
+router.get('/:id/update', isLoggedIn, isOwner, catchAsync(async (req, res, next) => {
     const { id } = req.params;
     const findCamp = await Campground.findById(id);
     res.render('campgrounds/update', { findCamp })
 }))
 
-router.patch('/:id', isLoggedIn, validateCampground, catchAsync(async (req, res, next) => {
+router.patch('/:id', isLoggedIn, isOwner, validateCampground, catchAsync(async (req, res, next) => {
     const { id } = req.params
     const data = req.body.campground
     const updateCamp = await Campground.findByIdAndUpdate(id, data, { runValidators: true })
@@ -57,7 +60,7 @@ router.patch('/:id', isLoggedIn, validateCampground, catchAsync(async (req, res,
     res.redirect(`/campgrounds/${updateCamp._id}`)
 }))
 
-router.delete('/:id', isLoggedIn, catchAsync(async (req, res, next) => {
+router.delete('/:id', isLoggedIn, isOwner, catchAsync(async (req, res, next) => {
     const { id } = req.params
     await Campground.findByIdAndDelete(id)
     req.flash('success', 'Successfully deleted campground')
@@ -66,7 +69,12 @@ router.delete('/:id', isLoggedIn, catchAsync(async (req, res, next) => {
 
 router.get('/:id', catchAsync(async (req, res) => {
     const id = req.params.id;
-    const campground = await Campground.findById(id).populate('reviews')
+    const campground = await Campground.findById(id).populate({
+        path: 'reviews',
+        populate: {
+            path: 'author'
+        }
+    }).populate('author')
     res.render('campgrounds/details', { campground })
 }))
 

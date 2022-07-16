@@ -37,7 +37,7 @@ const app = express()
 const PORT = 3000
 
 const sessionConfig = {
-    secret: 'keyboard cat',
+    secret: 'keyboard cat', //temporary development secret key
     resave: false,
     saveUninitialized: true,
     cookie: {
