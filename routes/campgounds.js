@@ -1,9 +1,6 @@
 const express = require('express')
 const router = express.Router()
 
-// import schema
-const Campground = require('../models/campground')
-
 //mongoose error handling wrapper
 const catchAsync = require('../utils/catchAsync')
 const ExpressError = require('../utils/ExpressError')
@@ -16,6 +13,9 @@ const isLoggedIn = require('../middleware/isLoggedIn')
 // author middleware
 const { isOwner } = require('../middleware/isOwner')
 
+// controllers
+const campgrounds = require('../controllers/campgrounds')
+
 function validateCampground(req, res, next) {
     const { error } = campgroundSchema.validate(req.body)
     if (error) {
@@ -24,58 +24,19 @@ function validateCampground(req, res, next) {
     next()
 }
 
-router.get('/', catchAsync(async (req, res, next) => {
-    const camps = await Campground.find({})
-    res.render('campgrounds/index', { camps })
-}))
-
+// show all campgrounds
+router.get('/', catchAsync(campgrounds.index))
+// render new campground form
+router.get('/new', isLoggedIn, campgrounds.renderNewCampground)
 // create new campground
-router.get('/new', isLoggedIn, (req, res) => {
-    res.render('campgrounds/new')
-})
+router.post('/', isLoggedIn, validateCampground, catchAsync(campgrounds.createNewCampground))
+// render update camp form
+router.get('/:id/update', isLoggedIn, isOwner, catchAsync(campgrounds.renderUpdateCampground))
+// update campground
+router.patch('/:id', isLoggedIn, isOwner, validateCampground, catchAsync(campgrounds.updateCampground))
+// delete campground
+router.delete('/:id', isLoggedIn, isOwner, catchAsync(campgrounds.deleteCampground))
+// detials
+router.get('/:id', catchAsync(campgrounds.detailsCampground))
 
-router.post('/', isLoggedIn, validateCampground, catchAsync(async (req, res, next) => {
-    if (!req.body.campground) {
-        throw new ExpressError("Invalid Data", 400)
-    }
-    const data = req.body.campground
-    const newcamp = new Campground(data);
-    newcamp.author = req.user._id
-    await newcamp.save()
-    req.flash('success', 'Successfully created a new campground')
-    res.redirect(`/campgrounds/${newcamp._id}`)
-}))
-
-router.get('/:id/update', isLoggedIn, isOwner, catchAsync(async (req, res, next) => {
-    const { id } = req.params;
-    const findCamp = await Campground.findById(id);
-    res.render('campgrounds/update', { findCamp })
-}))
-
-router.patch('/:id', isLoggedIn, isOwner, validateCampground, catchAsync(async (req, res, next) => {
-    const { id } = req.params
-    const data = req.body.campground
-    const updateCamp = await Campground.findByIdAndUpdate(id, data, { runValidators: true })
-    req.flash('success', 'Successfully updated campground')
-    res.redirect(`/campgrounds/${updateCamp._id}`)
-}))
-
-router.delete('/:id', isLoggedIn, isOwner, catchAsync(async (req, res, next) => {
-    const { id } = req.params
-    await Campground.findByIdAndDelete(id)
-    req.flash('success', 'Successfully deleted campground')
-    res.redirect('/campgrounds')
-}))
-
-router.get('/:id', catchAsync(async (req, res) => {
-    const id = req.params.id;
-    const campground = await Campground.findById(id).populate({
-        path: 'reviews',
-        populate: {
-            path: 'author'
-        }
-    }).populate('author')
-    res.render('campgrounds/details', { campground })
-}))
-
-module.exports = router
+module.exports = router;
