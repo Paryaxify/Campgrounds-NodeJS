@@ -1,5 +1,8 @@
 const express = require('express')
 const router = express.Router()
+const multer = require('multer')
+const { storage } = require('../cloudinaryConfig/index')
+const upload = multer({ storage: storage })
 
 //mongoose error handling wrapper
 const catchAsync = require('../utils/catchAsync')
@@ -29,11 +32,11 @@ router.get('/', catchAsync(campgrounds.index))
 // render new campground form
 router.get('/new', isLoggedIn, campgrounds.renderNewCampground)
 // create new campground
-router.post('/', isLoggedIn, validateCampground, catchAsync(campgrounds.createNewCampground))
+router.post('/', isLoggedIn, upload.array('image'), validateCampground, catchAsync(campgrounds.createNewCampground))
 // render update camp form
 router.get('/:id/update', isLoggedIn, isOwner, catchAsync(campgrounds.renderUpdateCampground))
 // update campground
-router.patch('/:id', isLoggedIn, isOwner, validateCampground, catchAsync(campgrounds.updateCampground))
+router.patch('/:id', isLoggedIn, isOwner, upload.array('image'), validateCampground, catchAsync(campgrounds.updateCampground))
 // delete campground
 router.delete('/:id', isLoggedIn, isOwner, catchAsync(campgrounds.deleteCampground))
 // detials

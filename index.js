@@ -1,4 +1,8 @@
 // import packages
+if (process.env.NODE_ENV != "production") {
+    require('dotenv').config()
+}
+
 const express = require('express')
 const path = require('path')
 const mongoose = require('mongoose')
@@ -7,7 +11,7 @@ const bodyParser = require('body-parser')
 const methodOverride = require('method-override')
 const morgan = require('morgan')
 const session = require('express-session')
-const flash = require('connect-flash') 
+const flash = require('connect-flash')
 const passport = require('passport')
 const LocalStrategy = require('passport-local')
 
@@ -75,7 +79,7 @@ passport.use(new LocalStrategy(User.authenticate()));
 passport.serializeUser(User.serializeUser());
 passport.deserializeUser(User.deserializeUser());
 
-app.use((req, res, next)=> {
+app.use((req, res, next) => {
     res.locals.currentUser = req.user
     res.locals.success = req.flash('success')
     res.locals.errors = req.flash('error')
