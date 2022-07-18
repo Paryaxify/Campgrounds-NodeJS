@@ -43,7 +43,7 @@ db()
 // init express app
 const app = express()
 // set port
-const PORT = 3000
+const PORT = 8080
 
 const sessionConfig = {
     name: 'session',
