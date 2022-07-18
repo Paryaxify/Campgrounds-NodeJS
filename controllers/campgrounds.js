@@ -3,9 +3,27 @@ const Campground = require('../models/campground');
 const mbxGeocoding = require('@mapbox/mapbox-sdk/services/geocoding');
 const geocodingService = mbxGeocoding({ accessToken: process.env.MAPBOX_TOKEN })
 
-module.exports.index = async (req, res, next) => {
-	const camps = await Campground.find({});
-	res.render('campgrounds/index', { camps });
+// module.exports.index = async (req, res, next) => {
+// 	const camps = await Campground.find({});
+// 	res.render('campgrounds/index', { camps });
+// };
+
+module.exports.paginate = async (req, res) => {
+	// destructure page and limit and set default values
+	const { page = 1, limit = 10 } = req.query;
+	// execute query with page and limit values
+	const campgs = await Campground.find({});
+	const camps = await Campground.find()
+		.limit(limit * 1)
+		.skip((page - 1) * limit)
+		.exec();
+
+	// get total documents in the Posts collection 
+	const count = await Campground.countDocuments();
+	const totalPages = Math.ceil(count / limit);
+	const currentPage = page;
+	res.render('campgrounds/index', { camps, totalPages, currentPage, campgs});
+
 };
 
 module.exports.renderNewCampground = (req, res) => {

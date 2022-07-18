@@ -28,7 +28,9 @@ function validateCampground(req, res, next) {
 }
 
 // show all campgrounds
-router.get('/', catchAsync(campgrounds.index))
+// router.get('/', catchAsync(campgrounds.index))
+
+router.get('/', catchAsync(campgrounds.paginate))
 // render new campground form
 router.get('/new', isLoggedIn, campgrounds.renderNewCampground)
 // create new campground
