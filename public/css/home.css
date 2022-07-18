@@ -40,8 +40,8 @@ body {
     filter: invert(100%);
 }
 
-@media screen and (min-width: 576px) {
+@media screen and (max-width: 576px) {
     .cover-container {
-        max-width: 90vw;
+        max-width: 100vw;
       }
 }
