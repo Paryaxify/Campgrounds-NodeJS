@@ -39,3 +39,9 @@ body {
     -webkit-filter: invert(100%);
     filter: invert(100%);
 }
+
+@media screen and (min-width: 576px) {
+    .cover-container {
+        max-width: 90vw;
+      }
+}
