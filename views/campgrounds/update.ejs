@@ -15,7 +15,7 @@
 				<input
 					name="campground[title]"
 					type="text"
-					class="form-control"
+					class="form-control bg-dark border-secondary text-light"
 					id="title"
 					value="<%= findCamp.title %>"
 					required
@@ -28,7 +28,7 @@
 					<input
 						name="campground[location]"
 						type="text"
-						class="form-control"
+						class="form-control bg-dark border-secondary text-light"
 						id="location"
 						value="<%= findCamp.location %>"
 						required
@@ -38,11 +38,11 @@
 				<div class="col-md-4 mb-3">
 					<label for="price" class="form-label">Price</label>
 					<div class="input-group">
-						<div class="input-group-text">&dollar;</div>
+						<div class="input-group-text bg-secondary border-secondary text-light">&dollar;</div>
 						<input
 							name="campground[price]"
 							type="number"
-							class="form-control"
+							class="form-control bg-dark border-secondary text-light"
 							id="price"
 							step="0.01"
 							value="<%= findCamp.price %>"
@@ -54,13 +54,13 @@
 			</div>
 			<div class="mb-3">
 				<label for="image" class="form-label">Upload more Images</label>
-				<input class="form-control" type="file" name="image" id="image" multiple />
+				<input class="form-control bg-dark border-secondary text-light" type="file" name="image" id="image" multiple />
 			</div>
 			<div class="mb-3">
 				<label for="description" class="form-label">Description</label>
 				<textarea
 					name="campground[description]"
-					class="form-control"
+					class="form-control bg-dark border-secondary text-light"
 					id="description"
 					rows="3"
 					required
@@ -70,9 +70,9 @@
             <div class="row d-flex justify-content-center">
                 <% findCamp.images.forEach((img, index) => { %>
                     <div class="form-check col-auto col-md-4">
-                        <input class="form-check-input" type="checkbox" name="deleteImages[]" value=<%=img.filename%> id="image-<%= index %>">
+                        <input class="form-check-input bg-dark border-secondary text-light" type="checkbox" name="deleteImages[]" value=<%=img.filename%> id="image-<%= index %>">
                         <label class="form-check-label" for="image-<%= index %>">Delete?</label>
-                        <img src=<%= img.url %> class="img-thumbnail" alt="...">
+                        <img src=<%= img.url %> class="img-thumbnail bg-dark border-secondary text-light" alt="...">
                     </div>
                 <% }) %>    
             </div>

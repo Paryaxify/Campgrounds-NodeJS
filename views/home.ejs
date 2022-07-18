@@ -1,12 +1,57 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Home Page</title>
-</head>
-<body>
-    <h1>Hello from CampGrounds</h1>
-</body>
+	<head>
+		<meta charset="UTF-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+		<title>Campgrounds</title>
+		<link
+			href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.0-beta1/dist/css/bootstrap.min.css"
+			rel="stylesheet"
+			integrity="sha384-0evHe/X+R7YkIZDRvuzKMRqM+OrBnVFBL6DOitfPri4tjfHxaWutUpFmBp4vmVor"
+			crossorigin="anonymous"
+		/>
+		<link rel="stylesheet" href="/css/home.css" />
+	</head>
+
+	<body class="d-flex text-center text-white bg-dark">
+		<div class="cover-container d-flex w-100 h-100 p-3 mx-auto flex-column">
+			<header class="mb-auto">
+				<div>
+					<a href="/" class="navbar-brand float-md-start fs-4 mb-0"><img src="/fire.png" alt="" width="30" height="30" class="d-inline-block align-text-top invert"> Campgounds</a>
+					<nav class="nav nav-masthead justify-content-center float-md-end">
+						<a class="nav-link active" aria-current="page" href="#">Home</a>
+						<a class="nav-link" href="/campgrounds">Campgrounds</a>
+						<% if(!currentUser) { %>
+						<a class="nav-link" href="/login">Login</a>
+						<% } else { %>
+						<a class="nav-link" href="/logout">Logout</a>
+						<% } %>
+					</nav>
+				</div>
+			</header>
+			<main class="px-3">
+				<h1 class="mb-3">Campgrounds</h1>
+				<p class="lead">
+					Welcome! <br />
+					Jump right in and explore our many campgrounds. <br />
+					Feel free to share some of your own and comment on others!
+				</p>
+				<a
+					href="/campgrounds"
+					class="btn btn-lg btn-outline-secondary font-weight-bold border-white text-white bg-none"
+					>View Campgrounds</a
+				>
+			</main>
+
+			<footer class="mt-auto text-white-50">
+				<p>&copy; 2022 Joylepenos</p>
+			</footer>
+		</div>
+
+		<script
+			src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.0-beta1/dist/js/bootstrap.bundle.min.js"
+			integrity="sha384-pprn3073KE6tl6bjs2QrFaJGz5/SUsLqktiwsUTF55Jfv3qYSDhgCecCxMW52nD2"
+			crossorigin="anonymous"
+		></script>
+	</body>
 </html>

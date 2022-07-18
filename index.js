@@ -1,5 +1,5 @@
 // import packages
-if (process.env.NODE_ENV != "production") {
+if (process.env.NODE_ENV !== "production") {
     require('dotenv').config()
 }
 
@@ -14,7 +14,11 @@ const session = require('express-session')
 const flash = require('connect-flash')
 const passport = require('passport')
 const LocalStrategy = require('passport-local')
+const mongoSanitize = require('express-mongo-sanitize');
+const helmet = require("helmet");
+const MongoStore = require('connect-mongo');
 
+const dbUrl = process.env.DB_URL || 'mongodb://127.0.0.1:27017/CampGround'
 //models
 const User = require('./models/user')
 
@@ -27,8 +31,9 @@ const reviewsRoute = require('./routes/reviews')
 const ExpressError = require('./utils/ExpressError')
 
 //connect to mongoDB database
+// 
 async function db() {
-    await mongoose.connect('mongodb://127.0.0.1:27017/CampGround');
+    await mongoose.connect(dbUrl);
 }
 
 db()
@@ -41,14 +46,19 @@ const app = express()
 const PORT = 3000
 
 const sessionConfig = {
-    secret: 'keyboard cat', //temporary development secret key
+    name: 'session',
+    secret: process.env.SESSION_SECRET || 'keyboard cat', //temporary development secret key
     resave: false,
     saveUninitialized: true,
     cookie: {
         // secure: true, //only sends cookies over HTTPS. use in production
         httpOnly: true,
         maxAge: 1000 * 60 * 60 * 24 * 7
-    }
+    },
+    store: MongoStore.create({
+        mongoUrl: dbUrl,
+        touchAfter: 24 * 3600,
+    })
 }
 // setup app
 // ejs engine -> ejs-mate
@@ -64,12 +74,62 @@ app.use(bodyParser.urlencoded({ extended: true }))
 app.use(bodyParser.json())
 // method override
 app.use(methodOverride('_method'))
+// To remove data using these defaults:
+app.use(mongoSanitize());
 // morgan console logger
 app.use(morgan('tiny'))
 // express-session 
 app.use(session(sessionConfig))
 // flash messages
 app.use(flash())
+
+
+const scriptSrcUrls = [
+    "https://stackpath.bootstrapcdn.com/",
+    "https://api.tiles.mapbox.com/",
+    "https://api.mapbox.com/",
+    "https://kit.fontawesome.com/",
+    "https://cdnjs.cloudflare.com/",
+    "https://cdn.jsdelivr.net",
+];
+//This is the array that needs added to
+const styleSrcUrls = [
+    "https://kit-free.fontawesome.com/",
+    "https://api.mapbox.com/",
+    "https://api.tiles.mapbox.com/",
+    "https://fonts.googleapis.com/",
+    "https://use.fontawesome.com/",
+    "https://cdn.jsdelivr.net",
+];
+const connectSrcUrls = [
+    "https://api.mapbox.com/",
+    "https://a.tiles.mapbox.com/",
+    "https://b.tiles.mapbox.com/",
+    "https://events.mapbox.com/",
+];
+const fontSrcUrls = [];
+
+app.use(
+    helmet.contentSecurityPolicy({
+        directives: {
+            defaultSrc: [],
+            connectSrc: ["'self'", ...connectSrcUrls],
+            scriptSrc: ["'unsafe-inline'", "'self'", ...scriptSrcUrls],
+            styleSrc: ["'self'", "'unsafe-inline'", ...styleSrcUrls],
+            workerSrc: ["'self'", "blob:"],
+            objectSrc: [],
+            imgSrc: [
+                "'self'",
+                "blob:",
+                "data:",
+                `https://res.cloudinary.com/${process.env.CLOUDINARY_CLOUD_NAME}/`, //SHOULD MATCH YOUR CLOUDINARY ACCOUNT! 
+                "https://images.unsplash.com/",
+            ],
+            fontSrc: ["'self'", ...fontSrcUrls],
+        },
+    })
+);
+
 
 app.use(passport.initialize())
 app.use(passport.session())
@@ -88,6 +148,7 @@ app.use((req, res, next) => {
 
 // home page
 app.get('/', (req, res) => {
+    console.log(req.query)
     res.render('home')
 })
 
