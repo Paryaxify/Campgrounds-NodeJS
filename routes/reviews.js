@@ -14,7 +14,9 @@ const reviews = require('../controllers/reviews')
 function validateReview(req, res, next) {
     const { error } = reviewSchema.validate(req.body)
     if (error) {
-        throw new ExpressError(error, 400)
+        let errorMessages = error.details.map(el => el.message)
+        req.flash('error', errorMessages)
+        throw new ExpressError(errorMessages, 400)
     }
     next()
 }

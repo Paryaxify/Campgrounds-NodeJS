@@ -10,9 +10,15 @@
 <% for( let camp of camps ) { %>
 <div class="card mb-3 bg-dark border-secondary">
 	<div class="row">
-		<div class="col-md-4">
-			<img src="<%= camp.images[0].thumbnail %>" class="card-img-top" alt="camp-image" />
-		</div>
+		<% if (camp.images.length) { %>
+			<div class="col-md-4">
+				<img src="<%= camp.images[0].thumbnail %>" class="card-img-top" alt="camp-image" />
+			</div>
+		<% } else { %>
+			<div class="col-md-4">
+				<img src="/no_image.jpg" class="card-img-top" alt="camp-image" />
+			</div>
+		<% } %> 
 		<div class="col-md-8 card-body">
 			<h5 class="card-title"><%= camp.title %></h5>
 			<h6 class="card-subtitle mb-2 fw-light"><%= camp.location %></h6>

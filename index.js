@@ -38,7 +38,7 @@ async function db() {
 
 db()
     .then(() => console.log('Connected to MongoDB'))
-    .catch(err => handleError(err));
+    .catch(err => console.log(err));
 
 // init express app
 const app = express()
@@ -148,7 +148,6 @@ app.use((req, res, next) => {
 
 // home page
 app.get('/', (req, res) => {
-    console.log(req.query)
     res.render('home')
 })
 
@@ -163,8 +162,9 @@ app.all('*', (req, res, next) => {
 })
 
 app.use((err, req, res, next) => {
-    const { statusCode = 500 } = err
-    if (!err.message) {
+    const { statusCode = 500} = err
+    if (statusCode === 500){
+        err.statusCode = 500
         err.message = 'Oh No, Something Went Wrong'
     }
     res.status(statusCode).render('campgrounds/error', { err })

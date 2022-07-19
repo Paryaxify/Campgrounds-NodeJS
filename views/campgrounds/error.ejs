@@ -1,22 +1,28 @@
 <% layout('layouts/boilerplate') -%>
 
 <style>
-    .card .card-header {
-        background-color: #fff;
-        border-bottom: none;
-    }
+	.card .card-header {
+		background-color: #fff;
+		border-bottom: none;
+	}
 </style>
 
 <div class="row justify-content-center">
-    <div class="card shadow-lg border-0 rounded-lg mt-5 mx-auto text-center">
-        <h1 class="card-header display-1 text-muted"> <%= err.message %> </h1>
-        <div class="card-body mx-auto">
-            <% if (process.env.NODE_ENV !== "production") { %>
-                <p class="card-subtitle mb-3 text-muted"> <%= err.stack %></p>
-            <% } %>
-            
-            <a type="button" href="/campgrounds"
-               class="btn btn-sm btn-info text-white"> Back To Home </a>
-        </div>
-    </div>
+	<div class="card rounded-lg mt-5 mx-auto text-center border-secondary">
+		<h1 class="card-header display-1 text-muted"><%= err.statusCode %></h1>
+        <h4 class="card-subtitle text-muted"><%= err.message %></h3>
+		<div class="card-body mx-auto">
+			<input type="button" value="Go Back" class="back btn btn-sm btn-info text-white m-3" />
+            <a type="button" href="/campgrounds" class="btn btn-sm btn-info text-white m-3">
+                Back To Home
+            </a>
+		</div>
+
+	</div>
 </div>
+
+<script>
+	let back_btn = document.querySelector('.back');
+	console.log(back_btn);
+	back_btn.addEventListener('click', () => window.history.go(-1));
+</script>
