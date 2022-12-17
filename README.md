@@ -2,7 +2,7 @@
 
 ## Methodology
 
-![](/home/prxfy/.config/marktext/images/2022-12-17-15-05-05-MongoEJSExpress.png)
+![Methodology](https://freebin.prxfy.me/qpea06)
 
 ## Description
 
@@ -16,6 +16,6 @@ Registered users can add their own camp sites to be made available to other user
 
 ## Screenshots
 
-![](/home/prxfy/.config/marktext/images/2022-12-17-15-16-49-image.png)
+![Site Homepage](https://freebin.prxfy.me/8zl7ft)
 
-![](/home/prxfy/.config/marktext/images/2022-12-17-15-15-55-Screenshot_20221217_151426.png)
+![Description Page](https://freebin.prxfy.me/gn6imq)
