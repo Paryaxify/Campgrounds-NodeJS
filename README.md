@@ -12,7 +12,7 @@ Registered users can add their own camp sites to be made available to other user
 
 ## Live Link
 
-[campgrounds.prxfy.me](https://campgrounds.prxfy.me)
+[campgrounds.prxfy.dev](https://campgrounds.prxfy.dev)
 
 ## Screenshots
 
